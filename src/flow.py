@@ -21,6 +21,13 @@ class Flow:
         last_month_end: str = date_manage.get_last_month_end(this_month)
         last_month_26 = last_month + '26'
 
+        dates_dic: Dict[str, str] = {
+                'this_month': this_month, 
+                'last_month': last_month, 
+                'this_month_end': this_month_end, 
+                'last_month_end': last_month_end
+        }
+
         fetch_uri_data = InstanceFactory.get_fetchUriData(
                 last_month_26, this_month_end
         )
@@ -58,7 +65,7 @@ class Flow:
                 mukesakis_dic["kumamoto"].append(line)
                 continue
 
-        print(mukesakis_dic)
+
 
         
 

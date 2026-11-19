@@ -26,3 +26,5 @@ def test_get_this_month_end(get_date_manage):
     assert result == '20260228'
     result = get_date_manage.get_this_month_end('202402')
     assert result == '20240229'
+    result = get_date_manage.get_this_month_end('202608')
+    assert result == '20260831'

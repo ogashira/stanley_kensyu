@@ -27,13 +27,14 @@ class IMukesakiStanUri{
     <<interface>>
 }
 class MukesakiToyoUri{
-    - uris_data:List[UriData]
-    - last26Deli_to_this25Deli:int
-    - this1Deli_to_this25Deli:int
-    - this26Deli_to_thinEndDeli:int
-    - last26Deli_to_lastEndDeli:int
-    - lastShip_to_thisDeli:int
-    - this1Ship_to_this25Deli:int
+    - mukesaki: str
+    - order_no: str
+    - tokui_name: str
+    - hinban: str
+    - amount: int
+    - deli_day: str
+    - tanka: int
+    - ship_day: str
     + add_uri_to_dic(Dict[str,Dict[str,int]]):None
     + check_uris_data():None
 }
@@ -52,16 +53,33 @@ class MukesakiStanUri{
     + check_uris_data(MukesakiToyoUri):None
 }
 class ToyoKensyu{
-    - Mukesakis:List[IMukesakiToyoUri]
-    - uris:Dict[str,Dict[str,int]]
+    - uri_instances:Dict[str,List[IMukesakiToyoUri]]
+    - last26Deli_to_this25Deli:int
+    - this1Deli_to_this25Deli:int
+    - this26Deli_to_thinEndDeli:int
+    - last26Deli_to_lastEndDeli:int
+    - lastShip_to_thisDeli:int
+    - thisShip_to_this25Deli:int
+    - total_last26Deli_to_this25Deli:int
+    - total_this1Deli_to_this25Deli:int
+    - total_this26Deli_to_thinEndDeli:int
+    - total_last26Deli_to_lastEndDeli:int
+    - total_lastShip_to_thisDeli:int
+    - total_thisShip_to_this25Deli:int
     - excel_ws
     + create_uris():Dict[str,Dict[str,int]]
     + input_to_ws():None
 }
 class StanKensyu{
-    - Mukesakis:List[IMukesakiStanUri]
-    - uris:Dict[str,Dict[str,int]]
-    - taxs:Dict[str,int]
+    - uri_instances:Dict[str,List[IMukesakiStanUri]]
+    - last26Deli_to_this25Deli:int
+    - this1Deli_to_this25Deli:int
+    - this26Deli_to_thinEndDeli:int
+    - last26Deli_to_lastEndDeli:int
+    - last26Deli_to_this25Deli_tax:int
+    - this1Deli_to_this25Deli_tax:int
+    - this26Deli_to_thinEndDeli_tax:int
+    - last26Deli_to_lastEndDeli_tax:int
     - excel_ws
     + create_uris():Dict[str,Dict[str,int]]
     + create_taxs():Dict[str,int]

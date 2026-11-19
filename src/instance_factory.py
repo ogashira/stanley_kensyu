@@ -66,19 +66,53 @@ class InstanceFactory:
                     )
         return cls._instances[ins_name]
 
+
     @classmethod
-    def get_HadanoToyoUri(cls, 
-            uris_data: List[List[Any]], mukesaki)-> List[IMukesakiToyoUri]:
+    def get_ToyoUriInstances(cls, 
+            mukesakis_dic: Dict[str, List[List[Any]]],
+            uri_col: List[str],
+            dates_dic: Dict[str, str])-> Dict[str, List[IMukesakiToyoUri]] :
+
+        '''
+        mukesakis_dic = {"hadano":[[uri_data_一行], [uri_data__一行]....], "hamamatsu": [[uri_data_一行], [uri_data__一行]..]}
+
+        uri_instances(MukesakisToyoUri) = {"hadano":[MukesakiToyoUri, MukesakiToyoUri....], "hamamatsu": [MukesakiToyoUri, MukesakiToyoUri....]}
+        '''
+        ins_name: str = 'toyo_uri_instances'
+        if ins_name in cls._instances:
+            return cls._instances[ins_name]
+
         
-        uri_instances: List[IMukesakiToyoUri] = []
+        uri_instances: Dict[str, List[IMukesakiToyoUri]] = {}
 
-        if not uris_data:
-            uri_instances.append(MukesakiToyoUri([], mukesaki))
-            return uri_instances
+        for mukesaki, uris_data in mukesakis_dic.items():
+            mukesakis: List[IMukesakiToyoUri] = []
+            if not uris_data:
+                mukesakis.append(MukesakiToyoUri([], mukesaki, uri_col, dates_dic))
+                uri_instances[mukesaki] = mukesakis
+                continue
 
-        for uri_data in uris_data:
-            toyo_uri: IMukesakiToyoUri = \
-                MukesakiToyoUri(uri_data, mukesaki)
-            uri_instances.append(toyo_uri)
+            for uri_data in uris_data:
+                toyo_uri: IMukesakiToyoUri = \
+                    MukesakiToyoUri(uri_data, mukesaki, uri_col, dates_dic)
+                mukesakis.append(toyo_uri)
+            uri_instances[mukesaki] = mukesakis
+
+        cls._instances[ins_name] = uri_instances
+
         return uri_instances
+
+
+    @classmethod
+    def get_ToyoKensyu(cls, 
+            mukesakis_dic: Dict[str, List[List[Any]]],
+            uri_col: List[str],
+            dates_dic: Dict[str, str])-> IMukesakiToyoUri:
+
+        toyo_uri_instances: Dict[str, List[IMukesakiToyoUri]] = \
+            cls.get_ToyoUriInstances(mukesakis_dic, uri_col, dates_dic)
+
+        return ToyoKensyu(toyo_uri_instances)
+
+         
 
