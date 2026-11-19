@@ -4,6 +4,7 @@ __pycache__
 *.un~
 *.ini
 *.ini~
+!pytest.ini
 *.xlsx
 ./yaml/
 *.yaml
