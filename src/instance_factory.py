@@ -5,6 +5,9 @@ from fetch_data_for_list import IFetchDataForList
 from get_idx import GetIdx
 from i_mukesaki_toyo_uri import IMukesakiToyoUri
 from mukesaki_toyo_uri import MukesakiToyoUri
+from toyo_kensyu import ToyoKensyu
+from excel import Excel
+from get_paths import get_sql_python_module_path
 
 # 実行時にはインポートせず、型チェックの為だけに書く
 if TYPE_CHECKING:
@@ -29,12 +32,7 @@ class InstanceFactory:
             return
             
         shared_folder_path: str = r'./'
-        if platform.system() == 'Linux':
-            shared_folder_path = \
-                r'/mnt/public/技術課ﾌｫﾙﾀﾞ/200. effit_data/ﾏｽﾀ/sql_python_module'
-        elif platform.system() == 'Windows':
-            shared_folder_path = \
-                r'//192.168.1.247/共有/技術課ﾌｫﾙﾀﾞ/200. effit_data/ﾏｽﾀ/sql_python_module'
+        shared_folder_path = get_sql_python_module_path()
         
         if shared_folder_path not in sys.path:
             sys.path.append(shared_folder_path)
@@ -107,7 +105,7 @@ class InstanceFactory:
     def get_ToyoKensyu(cls, 
             mukesakis_dic: Dict[str, List[List[Any]]],
             uri_col: List[str],
-            dates_dic: Dict[str, str])-> IMukesakiToyoUri:
+            dates_dic: Dict[str, str])-> ToyoKensyu:
 
         toyo_uri_instances: Dict[str, List[IMukesakiToyoUri]] = \
             cls.get_ToyoUriInstances(mukesakis_dic, uri_col, dates_dic)
@@ -115,4 +113,14 @@ class InstanceFactory:
         return ToyoKensyu(toyo_uri_instances)
 
          
+    @classmethod
+    def get_Excel(cls, 
+                  format_fullpath: str
+                  )-> Excel:
 
+        ins_name: str = 'get_Excel'
+        if ins_name not in cls._instances:
+            cls._instances[ins_name] = Excel(
+                    format_fullpath
+                    )
+        return cls._instances[ins_name]

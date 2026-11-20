@@ -1,18 +1,30 @@
 import sys
+import yaml
 from typing import List, Dict, TYPE_CHECKING, Optional, Any
 from date_manage import DateManage
 from instance_factory import InstanceFactory
 from convert_data_structure import ConvertDataStructure
+from toyo_kensyu import ToyoKensyu
 from get_idx import ogaColumnIndexError, GetIdx
+from get_paths import get_yaml_path, get_format_excel_fullpath
+
 
 # 実行時にはインポートせず、型チェックの為だけに書く
 if TYPE_CHECKING:
-    pass
-
+    from i_mukesaki_toyo_uri import IMukesakiToyoUri
+    from excel import Excel
 class Flow:
 
     @classmethod
     def start(cls) ->None:
+
+        path:str = get_yaml_path()
+
+        # YAMLファイルを読み込む
+        # {ICSNo:, stanley_factory_code:, format_fullpath:, kensyu_data_path:}
+        with open(path, "r", encoding="utf-8") as file:
+            yaml_data = yaml.safe_load(file)
+
         date_manage = DateManage()
         this_month = date_manage.year_month_input() 
 
@@ -65,7 +77,11 @@ class Flow:
                 mukesakis_dic["kumamoto"].append(line)
                 continue
 
-
+        # Excelのインスタンス生成
+        excel: Excel = InstanceFactory.get_Excel(get_format_excel_fullpath())
+    
+        # ToyoKensyuのインスタンス生成
+        toyo_kensyu: ToyoKensyu = InstanceFactory.get_ToyoKensyu(mukesakis_dic, uri_col, dates_dic)
 
         
 

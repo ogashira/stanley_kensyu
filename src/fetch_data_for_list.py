@@ -1,5 +1,4 @@
 import csv
-import yaml
 import platform
 import warnings
 from typing import List, Any, Tuple, Dict
@@ -62,18 +61,32 @@ class FetchUriData(IFetchDataForList):
 
         return columns, data_list
 
-        
 
-class FetchCans:
+class FetchStanKensyuData:
 
-    def fetch_data(self) -> Dict[str, Any]:
+    def __init__(self, kensyu_data_path:str) -> None:
+        self.kensyu_data_path = kensyu_data_path
 
-        path: str = r'\\192.168.1.247\共有\技術課ﾌｫﾙﾀﾞ\26. 製品DB\新ﾌｫｰﾏｯﾄ\営業部master\output_notification.yml'
-        if platform.system() == 'Linux':
-            path = r'/mnt/public/技術課ﾌｫﾙﾀﾞ/26. 製品DB/新ﾌｫｰﾏｯﾄ/営業部master/output_notification.yml'
+    def fetch_data(self, year_month: str) -> Tuple[List[str],List[List[Any]]]:
 
-        # YAMLファイルを開いて読み込む
-        with open(path, "r", encoding="utf-8") as file:
-            data = yaml.safe_load(file)
+        columns = ['No', 'unknown1', 'date', 'unknown2', 'unknown3', 
+                'unknown4', 'order_no' 'unknown5', 'unknown6', 'tani', 
+                'unknown7', 'unknown8', 'hin_name', 'unknown9', 'ics_no', 
+                'nonyu_cd', 'tanka', 'amount', 'qty', 'deli_day', 'unknown10', 
+                'unknown11', 'unknown12', 'unknown13', 'unknown14', 
+                'order_day', 'unknown15', 'unknown16', 'unknown17', 
+                'unknown18', 'unknown19', 'tax', 'unknown20'
+        ]
 
-        return data
+        path: str = rf'{self.kensyu_data_path}\{year_month}.csv'
+
+        try:
+            with open("data.csv", mode="r", encoding="utf-8", newline="") as f:
+                reader = csv.reader(f)
+                data = list(reader)  # [row for row in reader] でも同じ
+        except FileNotFoundError:
+            print(f"指定されたファイルが見つかりません: {year_month}.csv")
+            raise
+
+
+        return  columns, data
