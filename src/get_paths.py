@@ -19,9 +19,9 @@ def get_format_excel_fullpath()-> str:
 def get_kensyu_data_path()-> str:
     path = ''
     if platform.system() == 'Windows':
-        return r'\\192.168.1.247\共有\営業課ﾌｫﾙﾀﾞ\松戸\スタンレー検収\01_検収データ'
+        return r'\\192.168.1.247\共有\営業課ﾌｫﾙﾀﾞ\松戸\スタンレー検収\01_検収データ\\'
     if platform.system() == 'Linux':
-        return r'/mnt/public/営業課ﾌｫﾙﾀﾞ/松戸/スタンレー検収/01_検収データ'
+        return r'/mnt/public/営業課ﾌｫﾙﾀﾞ/松戸/スタンレー検収/01_検収データ/'
     return path
 
 def get_sql_python_module_path()-> str:
@@ -31,3 +31,10 @@ def get_sql_python_module_path()-> str:
     if platform.system() == 'Linux':
         return r'/mnt/public/技術課ﾌｫﾙﾀﾞ/200. effit_data/ﾏｽﾀ/sql_python_module'
     return path
+
+def get_excel_output_path()-> str:
+    path = ''
+    if platform.system() == 'Windows':
+        return r"\\192.168.1.247\共有\営業課ﾌｫﾙﾀﾞ\松戸\スタンレー検収\02_検収完了\\"
+    if platform.system() == 'Linux':
+        return r'/mnt/public/営業課ﾌｫﾙﾀﾞ/松戸/スタンレー検収/02_検収完了/'

@@ -70,7 +70,7 @@ class FetchStanKensyuData:
     def fetch_data(self, year_month: str) -> Tuple[List[str],List[List[Any]]]:
 
         columns = ['No', 'unknown1', 'date', 'unknown2', 'unknown3', 
-                'unknown4', 'order_no' 'unknown5', 'unknown6', 'tani', 
+                'unknown4', 'order_no', 'unknown5', 'unknown6', 'tani', 
                 'unknown7', 'unknown8', 'hin_name', 'unknown9', 'ics_no', 
                 'nonyu_cd', 'tanka', 'amount', 'qty', 'deli_day', 'unknown10', 
                 'unknown11', 'unknown12', 'unknown13', 'unknown14', 
@@ -78,14 +78,15 @@ class FetchStanKensyuData:
                 'unknown18', 'unknown19', 'tax', 'unknown20'
         ]
 
-        path: str = rf'{self.kensyu_data_path}\{year_month}.csv'
+        fullpath: str = rf'{self.kensyu_data_path}{year_month}.tsv'
 
         try:
-            with open("data.csv", mode="r", encoding="utf-8", newline="") as f:
-                reader = csv.reader(f)
-                data = list(reader)  # [row for row in reader] でも同じ
+            with open(fullpath, mode="r", encoding="cp932", newline="") as f:
+                reader = csv.reader(f, delimiter="\t")
+                data = [[cell.strip() for cell in row]for row in reader]
+                # データの空白を除いてリストに詰める
         except FileNotFoundError:
-            print(f"指定されたファイルが見つかりません: {year_month}.csv")
+            print(f"指定されたファイルが見つかりません: {year_month}.tsv")
             raise
 
 

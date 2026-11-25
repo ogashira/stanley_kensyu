@@ -1,8 +1,8 @@
-from i_mukesaki_toyo_uri import IMukesakiToyoUri
+from i_uri_data import IUriData
 from typing import Dict, List, Any
 from get_idx import GetIdx
 
-class MukesakiToyoUri(IMukesakiToyoUri):
+class ToyoUri(IUriData):
     '''
     uri_col =  ['uri_no', 'order_no', 'tokui_name'," 'hinban', 'amount', 
                 'deli_day', 'tanka', 'ship_day']
@@ -24,14 +24,14 @@ class MukesakiToyoUri(IMukesakiToyoUri):
         self._tanka: int = 0
         self._ship_day: str = ''
 
-        uri_no_idx = GetIdx.get_idx(uri_col, 'uri_no')
-        order_no_idx = GetIdx.get_idx(uri_col, 'order_no')
-        tokui_name_idx = GetIdx.get_idx(uri_col, 'tokui_name')
-        hinban_idx = GetIdx.get_idx(uri_col, 'hinban')
-        amount_idx = GetIdx.get_idx(uri_col, 'amount')
-        deli_day_idx = GetIdx.get_idx(uri_col, 'deli_day')
-        tanka_idx = GetIdx.get_idx(uri_col, 'tanka')
-        ship_day_idx = GetIdx.get_idx(uri_col, 'ship_day')
+        uri_no_idx: int = GetIdx.get_idx(uri_col, 'uri_no')
+        order_no_idx: int = GetIdx.get_idx(uri_col, 'order_no')
+        tokui_name_idx: int = GetIdx.get_idx(uri_col, 'tokui_name')
+        hinban_idx: int = GetIdx.get_idx(uri_col, 'hinban')
+        amount_idx: int = GetIdx.get_idx(uri_col, 'amount')
+        deli_day_idx: int = GetIdx.get_idx(uri_col, 'deli_day')
+        tanka_idx: int = GetIdx.get_idx(uri_col, 'tanka')
+        ship_day_idx: int = GetIdx.get_idx(uri_col, 'ship_day')
 
         if uri_data:
             self._uri_no: str = uri_data[uri_no_idx]
@@ -44,7 +44,9 @@ class MukesakiToyoUri(IMukesakiToyoUri):
             self._ship_day: str = uri_data[ship_day_idx]
 
 
-    def add_uri_to_dic(self, mukesaki: str, period: str, sum_uri: int)-> int:
+    def add_amount(self, mukesaki: str, period: str, 
+                   sum_uri: int, uri_or_tax = 'uri')-> int:
+
         if self._mukesaki != mukesaki:
             return sum_uri + 0
 
@@ -57,57 +59,57 @@ class MukesakiToyoUri(IMukesakiToyoUri):
         thisEnd: str = self._dates_dic['this_month_end']
 
         if period == 'last26Deli_to_this25Deli':
-            sum_uri = self._calc_last26Deli_to_this25Deli(
+            sum_uri = self._add_last26Deli_to_this25Deli(
                     sum_uri, last26, this25
             )
         if period == 'this1Deli_to_this25Deli':
-            sum_uri = self._calc_this1Deli_to_this25Deli(
+            sum_uri = self._add_this1Deli_to_this25Deli(
                     sum_uri, this1, this25
             )
         if period == 'this26Deli_to_thisEndDeli':
-            sum_uri = self._calc_this26Deli_to_thisEndDeli(
+            sum_uri = self._add_this26Deli_to_thisEndDeli(
                     sum_uri, this26, thisEnd
             )
         if period == 'last26Deli_to_lastEndDeli':
-            sum_uri = self._calc_last26Deli_to_lastEndDeli(
+            sum_uri = self._add_last26Deli_to_lastEndDeli(
                     sum_uri, last26, lastEnd
             )
         if period == 'lastShip_to_thisDeli':
-            sum_uri = self._calc_lastShip_to_thisDeli(
+            sum_uri = self._add_lastShip_to_thisDeli(
                     sum_uri, last1, lastEnd, this1, this25
             )
         if period == 'this1Ship_to_this25Deli':
-            sum_uri = self._calc_this1Ship_to_this25Deli(
+            sum_uri = self._add_this1Ship_to_this25Deli(
                     sum_uri, this1, this25, this1, this25
             )
 
         return sum_uri
 
-    def _calc_last26Deli_to_this25Deli( self, sum_uri: int, 
+    def _add_last26Deli_to_this25Deli( self, sum_uri: int, 
                                        stt_day: str, end_day: str)-> int:
         if stt_day <= self._deli_day <= end_day:
             sum_uri += self._amount
         return sum_uri
 
-    def _calc_this1Deli_to_this25Deli(self, sum_uri: int, 
+    def _add_this1Deli_to_this25Deli(self, sum_uri: int, 
                                       stt_day: str, end_day: str)-> int:
         if stt_day <= self._deli_day <= end_day:
             sum_uri += self._amount
         return sum_uri
 
-    def _calc_this26Deli_to_thisEndDeli(self, sum_uri: int, 
+    def _add_this26Deli_to_thisEndDeli(self, sum_uri: int, 
                                         stt_day: str, end_day: str)-> int:
         if stt_day <= self._deli_day <= end_day:
             sum_uri += self._amount
         return sum_uri
 
-    def _calc_last26Deli_to_lastEndDeli(self, sum_uri: int, 
+    def _add_last26Deli_to_lastEndDeli(self, sum_uri: int, 
                                         stt_day: str, end_day: str)-> int:
         if stt_day <= self._deli_day <= end_day:
             sum_uri += self._amount
         return sum_uri
             
-    def _calc_lastShip_to_thisDeli(self, sum_uri: int, 
+    def _add_lastShip_to_thisDeli(self, sum_uri: int, 
                                    ship_stt_day: str, ship_end_day: str,
                                    deli_stt_day: str, deli_end_day: str)-> int:
         if (ship_stt_day <= self._ship_day <= ship_end_day and 
@@ -115,7 +117,7 @@ class MukesakiToyoUri(IMukesakiToyoUri):
             sum_uri += self._amount
         return sum_uri
 
-    def _calc_this1Ship_to_this25Deli(self, sum_uri: int, 
+    def _add_this1Ship_to_this25Deli(self, sum_uri: int, 
                                    ship_stt_day: str, ship_end_day: str,
                                    deli_stt_day: str, deli_end_day: str)-> int:
         if (ship_stt_day <= self._ship_day <= ship_end_day and 

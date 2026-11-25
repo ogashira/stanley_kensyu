@@ -1,13 +1,14 @@
 from typing import Dict, TYPE_CHECKING, Any, List, Tuple, Optional
 import platform
 import sys
-from fetch_data_for_list import IFetchDataForList
+from fetch_data_for_list import IFetchDataForList, FetchStanKensyuData
 from get_idx import GetIdx
-from i_mukesaki_toyo_uri import IMukesakiToyoUri
-from mukesaki_toyo_uri import MukesakiToyoUri
+from i_uri_data import IUriData
+from toyo_uri import ToyoUri
 from toyo_kensyu import ToyoKensyu
 from excel import Excel
-from get_paths import get_sql_python_module_path
+from get_paths import get_sql_python_module_path, get_kensyu_data_path
+from fetch_data_for_list import FetchStanKensyuData
 
 # 実行時にはインポートせず、型チェックの為だけに書く
 if TYPE_CHECKING:
@@ -69,30 +70,29 @@ class InstanceFactory:
     def get_ToyoUriInstances(cls, 
             mukesakis_dic: Dict[str, List[List[Any]]],
             uri_col: List[str],
-            dates_dic: Dict[str, str])-> Dict[str, List[IMukesakiToyoUri]] :
+            dates_dic: Dict[str, str])-> Dict[str, List[IUriData]] :
 
         '''
         mukesakis_dic = {"hadano":[[uri_data_一行], [uri_data__一行]....], "hamamatsu": [[uri_data_一行], [uri_data__一行]..]}
 
-        uri_instances(MukesakisToyoUri) = {"hadano":[MukesakiToyoUri, MukesakiToyoUri....], "hamamatsu": [MukesakiToyoUri, MukesakiToyoUri....]}
+        uri_instances(ToyoUri) = {"hadano":[ToyoUri, ToyoUri....], "hamamatsu": [ToyoUri, ToyoUri....]}
         '''
         ins_name: str = 'toyo_uri_instances'
         if ins_name in cls._instances:
             return cls._instances[ins_name]
 
-        
-        uri_instances: Dict[str, List[IMukesakiToyoUri]] = {}
+        uri_instances: Dict[str, List[IUriData]] = {}
 
         for mukesaki, uris_data in mukesakis_dic.items():
-            mukesakis: List[IMukesakiToyoUri] = []
+            mukesakis: List[IUriData] = []
             if not uris_data:
-                mukesakis.append(MukesakiToyoUri([], mukesaki, uri_col, dates_dic))
+                mukesakis.append(ToyoUri([], mukesaki, uri_col, dates_dic))
                 uri_instances[mukesaki] = mukesakis
                 continue
 
             for uri_data in uris_data:
-                toyo_uri: IMukesakiToyoUri = \
-                    MukesakiToyoUri(uri_data, mukesaki, uri_col, dates_dic)
+                toyo_uri: IUriData = \
+                    ToyoUri(uri_data, mukesaki, uri_col, dates_dic)
                 mukesakis.append(toyo_uri)
             uri_instances[mukesaki] = mukesakis
 
@@ -107,20 +107,24 @@ class InstanceFactory:
             uri_col: List[str],
             dates_dic: Dict[str, str])-> ToyoKensyu:
 
-        toyo_uri_instances: Dict[str, List[IMukesakiToyoUri]] = \
+        toyo_uri_instances: Dict[str, List[IUriData]] = \
             cls.get_ToyoUriInstances(mukesakis_dic, uri_col, dates_dic)
 
-        return ToyoKensyu(toyo_uri_instances)
+        excel: Excel = cls.get_Excel()
+
+        return ToyoKensyu(toyo_uri_instances, excel)
 
          
     @classmethod
-    def get_Excel(cls, 
-                  format_fullpath: str
-                  )-> Excel:
+    def get_Excel(cls)-> Excel:
 
         ins_name: str = 'get_Excel'
         if ins_name not in cls._instances:
-            cls._instances[ins_name] = Excel(
-                    format_fullpath
-                    )
+            cls._instances[ins_name] = Excel()
         return cls._instances[ins_name]
+
+
+    @classmethod
+    def get_FetchStanKensyuData(cls)-> FetchStanKensyuData:
+        kensyu_data_path: str = get_kensyu_data_path()
+        return FetchStanKensyuData(kensyu_data_path)

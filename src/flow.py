@@ -11,7 +11,7 @@ from get_paths import get_yaml_path, get_format_excel_fullpath
 
 # 実行時にはインポートせず、型チェックの為だけに書く
 if TYPE_CHECKING:
-    from i_mukesaki_toyo_uri import IMukesakiToyoUri
+    from i_uri_data import IUriData
     from excel import Excel
 class Flow:
 
@@ -76,15 +76,31 @@ class Flow:
             if "熊本" in line[mukesaki_idx]:
                 mukesakis_dic["kumamoto"].append(line)
                 continue
-
-        # Excelのインスタンス生成
-        excel: Excel = InstanceFactory.get_Excel(get_format_excel_fullpath())
     
         # ToyoKensyuのインスタンス生成
-        toyo_kensyu: ToyoKensyu = InstanceFactory.get_ToyoKensyu(mukesakis_dic, uri_col, dates_dic)
+        toyo_kensyu: ToyoKensyu = InstanceFactory.get_ToyoKensyu(
+                mukesakis_dic, uri_col, dates_dic
+        )
+        toyo_kensyu.write_uri_mount_to_ws()
+        toyo_kensyu.excel_save()
 
-        
+        # StanleyKensyu_dataを取得する。
+        fetch_stan_kensyu_data = InstanceFactory.get_FetchStanKensyuData()
+        stan_data_col, stan_data_last_month = \
+                              fetch_stan_kensyu_data.fetch_data(last_month) 
+        _, stan_data_this_month = fetch_stan_kensyu_data.fetch_data(this_month)
 
+        # 先月と今月のデータを結合する
+        stan_data = stan_data_last_month + stan_data_this_month
+
+        deli_day_idx = GetIdx.get_idx(stan_data_col, "deli_day")
+        for line in stan_data:
+            line[deli_day_idx] = "20" + line[deli_day_idx]  # 20260726のようにする
+
+
+        print(stan_data_col)
+        print(stan_data)
+        print(deli_day_idx)
 
 
         

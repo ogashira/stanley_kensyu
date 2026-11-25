@@ -1,6 +1,6 @@
 import pytest
 from typing import List, Dict, Any
-from src.mukesaki_toyo_uri import MukesakiToyoUri
+from src.toyo_uri import ToyoUri
 from src.instance_factory import InstanceFactory
 from src.get_idx import GetIdx
 
@@ -45,7 +45,7 @@ def get_ToyoUriInstances(get_uri_data):
     uri_instances = InstanceFactory.get_ToyoUriInstances(mukesakis_dic, col, dates_dic)
     return uri_instances
 
-def test_add_uri_to_dic(get_ToyoUriInstances):
+def test_add_amount(get_ToyoUriInstances):
     uri_instances = get_ToyoUriInstances
     hadano_last26Deli_to_this25Deli = 0
     hadano_this1Deli_to_this25Deli = 0
@@ -79,94 +79,94 @@ def test_add_uri_to_dic(get_ToyoUriInstances):
     kumamoto_this1Ship_to_this25Deli = 0
     for mukesaki, uris in uri_instances.items():
         for uri in uris:
-            hadano_last26Deli_to_this25Deli = uri.add_uri_to_dic(
+            hadano_last26Deli_to_this25Deli = uri.add_amount(
                     'hadano', 'last26Deli_to_this25Deli', 
                     hadano_last26Deli_to_this25Deli)
-            hadano_this1Deli_to_this25Deli = uri.add_uri_to_dic(
+            hadano_this1Deli_to_this25Deli = uri.add_amount(
                     'hadano', 'this1Deli_to_this25Deli', 
                     hadano_this1Deli_to_this25Deli)
-            hadano_this26Deli_to_thisEndDeli = uri.add_uri_to_dic(
+            hadano_this26Deli_to_thisEndDeli = uri.add_amount(
                     'hadano', 'this26Deli_to_thisEndDeli', 
                     hadano_this26Deli_to_thisEndDeli)
-            hadano_last26Deli_to_lastEndDeli = uri.add_uri_to_dic(
+            hadano_last26Deli_to_lastEndDeli = uri.add_amount(
                     'hadano', 'last26Deli_to_lastEndDeli', 
                     hadano_last26Deli_to_lastEndDeli)
-            hadano_lastShip_to_thisDeli = uri.add_uri_to_dic(
+            hadano_lastShip_to_thisDeli = uri.add_amount(
                     'hadano', 'lastShip_to_thisDeli', 
                     hadano_lastShip_to_thisDeli)
-            hadano_this1Ship_to_this25Deli = uri.add_uri_to_dic(
+            hadano_this1Ship_to_this25Deli = uri.add_amount(
                     'hadano', 'this1Ship_to_this25Deli', 
                     hadano_this1Ship_to_this25Deli)
-            hamamatsu_last26Deli_to_this25Deli = uri.add_uri_to_dic(
+            hamamatsu_last26Deli_to_this25Deli = uri.add_amount(
                     'hamamatsu', 'last26Deli_to_this25Deli', 
                     hamamatsu_last26Deli_to_this25Deli)
-            hamamatsu_this1Deli_to_this25Deli = uri.add_uri_to_dic(
+            hamamatsu_this1Deli_to_this25Deli = uri.add_amount(
                     'hamamatsu', 'this1Deli_to_this25Deli', 
                     hamamatsu_this1Deli_to_this25Deli)
-            hamamatsu_this26Deli_to_thisEndDeli = uri.add_uri_to_dic(
+            hamamatsu_this26Deli_to_thisEndDeli = uri.add_amount(
                     'hamamatsu', 'this26Deli_to_thisEndDeli', 
                     hamamatsu_this26Deli_to_thisEndDeli)
-            hamamatsu_last26Deli_to_lastEndDeli = uri.add_uri_to_dic(
+            hamamatsu_last26Deli_to_lastEndDeli = uri.add_amount(
                     'hamamatsu', 'last26Deli_to_lastEndDeli', 
                     hamamatsu_last26Deli_to_lastEndDeli)
-            hamamatsu_lastShip_to_thisDeli = uri.add_uri_to_dic(
+            hamamatsu_lastShip_to_thisDeli = uri.add_amount(
                     'hamamatsu', 'lastShip_to_thisDeli', 
                     hamamatsu_lastShip_to_thisDeli)
-            hamamatsu_this1Ship_to_this25Deli = uri.add_uri_to_dic(
+            hamamatsu_this1Ship_to_this25Deli = uri.add_amount(
                     'hamamatsu', 'this1Ship_to_this25Deli', 
                     hamamatsu_this1Ship_to_this25Deli)
-            okazaki_last26Deli_to_this25Deli = uri.add_uri_to_dic(
+            okazaki_last26Deli_to_this25Deli = uri.add_amount(
                     'okazaki', 'last26Deli_to_this25Deli', 
                     okazaki_last26Deli_to_this25Deli)
-            okazaki_this1Deli_to_this25Deli = uri.add_uri_to_dic(
+            okazaki_this1Deli_to_this25Deli = uri.add_amount(
                     'okazaki', 'this1Deli_to_this25Deli', 
                     okazaki_this1Deli_to_this25Deli)
-            okazaki_this26Deli_to_thisEndDeli = uri.add_uri_to_dic(
+            okazaki_this26Deli_to_thisEndDeli = uri.add_amount(
                     'okazaki', 'this26Deli_to_thisEndDeli', 
                     okazaki_this26Deli_to_thisEndDeli)
-            okazaki_last26Deli_to_lastEndDeli = uri.add_uri_to_dic(
+            okazaki_last26Deli_to_lastEndDeli = uri.add_amount(
                     'okazaki', 'last26Deli_to_lastEndDeli', 
                     okazaki_last26Deli_to_lastEndDeli)
-            okazaki_lastShip_to_thisDeli = uri.add_uri_to_dic(
+            okazaki_lastShip_to_thisDeli = uri.add_amount(
                     'okazaki', 'lastShip_to_thisDeli', 
                     okazaki_lastShip_to_thisDeli)
-            okazaki_this1Ship_to_this25Deli = uri.add_uri_to_dic(
+            okazaki_this1Ship_to_this25Deli = uri.add_amount(
                     'okazaki', 'this1Ship_to_this25Deli', 
                     okazaki_this1Ship_to_this25Deli)
-            hiroshima_last26Deli_to_this25Deli = uri.add_uri_to_dic(
+            hiroshima_last26Deli_to_this25Deli = uri.add_amount(
                     'hiroshima', 'last26Deli_to_this25Deli', 
                     hiroshima_last26Deli_to_this25Deli)
-            hiroshima_this1Deli_to_this25Deli = uri.add_uri_to_dic(
+            hiroshima_this1Deli_to_this25Deli = uri.add_amount(
                     'hiroshima', 'this1Deli_to_this25Deli', 
                     hiroshima_this1Deli_to_this25Deli)
-            hiroshima_this26Deli_to_thisEndDeli = uri.add_uri_to_dic(
+            hiroshima_this26Deli_to_thisEndDeli = uri.add_amount(
                     'hiroshima', 'this26Deli_to_thisEndDeli', 
                     hiroshima_this26Deli_to_thisEndDeli)
-            hiroshima_last26Deli_to_lastEndDeli = uri.add_uri_to_dic(
+            hiroshima_last26Deli_to_lastEndDeli = uri.add_amount(
                     'hiroshima', 'last26Deli_to_lastEndDeli', 
                     hiroshima_last26Deli_to_lastEndDeli)
-            hiroshima_lastShip_to_thisDeli = uri.add_uri_to_dic(
+            hiroshima_lastShip_to_thisDeli = uri.add_amount(
                     'hiroshima', 'lastShip_to_thisDeli', 
                     hiroshima_lastShip_to_thisDeli)
-            hiroshima_this1Ship_to_this25Deli = uri.add_uri_to_dic(
+            hiroshima_this1Ship_to_this25Deli = uri.add_amount(
                     'hiroshima', 'this1Ship_to_this25Deli', 
                     hiroshima_this1Ship_to_this25Deli)
-            kumamoto_last26Deli_to_this25Deli = uri.add_uri_to_dic(
+            kumamoto_last26Deli_to_this25Deli = uri.add_amount(
                     'kumamoto', 'last26Deli_to_this25Deli', 
                     kumamoto_last26Deli_to_this25Deli)
-            kumamoto_this1Deli_to_this25Deli = uri.add_uri_to_dic(
+            kumamoto_this1Deli_to_this25Deli = uri.add_amount(
                     'kumamoto', 'this1Deli_to_this25Deli', 
                     kumamoto_this1Deli_to_this25Deli)
-            kumamoto_this26Deli_to_thisEndDeli = uri.add_uri_to_dic(
+            kumamoto_this26Deli_to_thisEndDeli = uri.add_amount(
                     'kumamoto', 'this26Deli_to_thisEndDeli', 
                     kumamoto_this26Deli_to_thisEndDeli)
-            kumamoto_last26Deli_to_lastEndDeli = uri.add_uri_to_dic(
+            kumamoto_last26Deli_to_lastEndDeli = uri.add_amount(
                     'kumamoto', 'last26Deli_to_lastEndDeli', 
                     kumamoto_last26Deli_to_lastEndDeli)
-            kumamoto_lastShip_to_thisDeli = uri.add_uri_to_dic(
+            kumamoto_lastShip_to_thisDeli = uri.add_amount(
                     'kumamoto', 'lastShip_to_thisDeli', 
                     kumamoto_lastShip_to_thisDeli)
-            kumamoto_this1Ship_to_this25Deli = uri.add_uri_to_dic(
+            kumamoto_this1Ship_to_this25Deli = uri.add_amount(
                     'kumamoto', 'this1Ship_to_this25Deli', 
                     kumamoto_this1Ship_to_this25Deli)
     assert hadano_last26Deli_to_this25Deli == 154385
