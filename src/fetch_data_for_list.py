@@ -29,8 +29,9 @@ class FetchUriData(IFetchDataForList):
                     " RURIDT.RurCMNo AS 'order_no'," 
                     " RURIHD.RurTokNam1 AS 'tokui_name',"
                     " RURIDT.RurHinCD AS 'hinban', RURIDT.RurUriKin AS 'amount'," 
-                    " RURIDT.RurNODay as 'deli_day', RURIDT.RurUriTnk as 'tanka',"
-                    " RURIDT.RurUriDay as 'ship_day'"
+                    " RURIDT.RurNODay AS 'deli_day', RURIDT.RurUriTnk as 'tanka',"
+                    " RURIDT.RurUriSu AS 'qty',"
+                    " RURIDT.RurUriDay AS 'ship_day'"
                     " From dbo.RURIDT"
                     " LEFT JOIN dbo.RURIHD"
                     " ON RURIDT.RurUNo = RURIHD.RurUNo"
@@ -79,6 +80,7 @@ class FetchStanKensyuData:
         ]
 
         fullpath: str = rf'{self.kensyu_data_path}{year_month}.tsv'
+        # year_month.tsv -> 202607.tsv
 
         try:
             with open(fullpath, mode="r", encoding="cp932", newline="") as f:

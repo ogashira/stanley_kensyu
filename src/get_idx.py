@@ -1,7 +1,7 @@
 from typing import List
 
 
-class ogaColumnIndexError(Exception):
+class OgaColumnIndexError(Exception):
     pass
 
 class GetIdx:

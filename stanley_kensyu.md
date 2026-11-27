@@ -8,9 +8,10 @@ classDiagram
 direction TB
 
 
-class UriData{
+class IUriData{
     <<interface>>
     + add_amount():None*
+    + get_uri_infos():Dict[str,Any]*
 }
 class ToyoUri{
     - mukesaki: str
@@ -20,9 +21,10 @@ class ToyoUri{
     - amount: int
     - deli_day: str
     - tanka: int
+    - qty: int
     - ship_day: str
     + add_amount(Dict[str,Dict[str,int]]):None
-    + check_uris_data():None
+    + get_uri_infos():Dict[str,Any]
 }
 class StanUri{
     - mukesaki: str
@@ -35,33 +37,38 @@ class StanUri{
     - tax: int
     - deli_day: str
     - tanka: int
+    - qty: int
     - ship_day: str
     + add_amount(Dict[str,Dict[str,int]]):None
-    + check_uris_data(MukesakiToyoUri):None
+    + get_uri_infos():Dict[str,Any]
 }
 class ToyoKensyu{
-    - uri_instances:Dict[str,List[IMukesakiToyoUri]]
+    - uri_instances:Dict[str,List[IUriData]]
+    - uri_amounts_dic:Dict[str,Dict[str,int]]
     - excel:Excel
-    + write_uri_mount_to_ws():None
+    + write_amount_to_ws():None
+    + get_uri_amounts_dic():Dict[str,Dict[str,int]]
 }
 class StanKensyu{
-    - uri_instances:Dict[str,List[IMukesakiStanUri]]
+    - uri_instances:Dict[str,List[IUriData]]
+    - uri_amounts_dic:Dict[str,Dict[str,int]]
     - excel:Excel
-    + write_uri_mount_to_ws():None
-    + write_tax_mount_to_ws():None
+    + write_amount_to_ws():None
+    + get_uri_amounts_dic():Dict[str,Dict[str,int]]
 }
 class CheckUriData{
-    - mukesakis_toyo_uri:Dict[str,IMukesakiToyoUri]
-    - mukesakis_stan_uri:Dict[str,IMukesakiStanUri]
+    - toyo_kensyu:ToyoKensyu
+    - stan_kensyu:StanKensyu
     - excel_ws
+    + check_uri_amounts()
     + check_uris_data()
 }
 
 
-UriData <|.. ToyoUri
-UriData <|.. StanUri
-ToyoKensyu --> UriData
-StanKensyu --> UriData
+IUriData <|.. ToyoUri
+IUriData <|.. StanUri
+ToyoKensyu --> IUriData
+StanKensyu --> IUriData
 ```
 
         columns = ['No', 'unknown1', 'date', 'unknown2', 'unknown3', 

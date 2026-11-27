@@ -2,10 +2,10 @@ import sys
 import yaml
 from typing import List, Dict, TYPE_CHECKING, Optional, Any
 from date_manage import DateManage
+from data_processing import DataProcessing
 from instance_factory import InstanceFactory
-from convert_data_structure import ConvertDataStructure
 from toyo_kensyu import ToyoKensyu
-from get_idx import ogaColumnIndexError, GetIdx
+from stan_kensyu import StanKensyu
 from get_paths import get_yaml_path, get_format_excel_fullpath
 
 
@@ -17,13 +17,6 @@ class Flow:
 
     @classmethod
     def start(cls) ->None:
-
-        path:str = get_yaml_path()
-
-        # YAMLファイルを読み込む
-        # {ICSNo:, stanley_factory_code:, format_fullpath:, kensyu_data_path:}
-        with open(path, "r", encoding="utf-8") as file:
-            yaml_data = yaml.safe_load(file)
 
         date_manage = DateManage()
         this_month = date_manage.year_month_input() 
@@ -40,67 +33,81 @@ class Flow:
                 'last_month_end': last_month_end
         }
 
+        '''
+        toyoデータ>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        '''
         fetch_uri_data = InstanceFactory.get_fetchUriData(
                 last_month_26, this_month_end
         )
         try:
-            uri_col, uri_data = fetch_uri_data.fetch_data()
+            toyo_data_col, toyo_data = fetch_uri_data.fetch_data()
         except Exception as e:
             print(f"SQLサーバーからデータ取得失敗です。中止します:{e}")
             InstanceFactory.delete_cnxn()
             sys.exit(1)
 
-        # mukesakis_dic = {"hadano":[[uri_data_一行], [uri_data__一行]....], 
-        #                  "hamamatsu": [[uri_data_一行], [uri_data__一行]..]}
-        mukesakis_dic: Dict[str, List[List[Any]]]= {
-                "hadano": [], "hamamatsu": [], "okazaki": [], "hiroshima": [], 
-                "kumamoto":[]
-        } 
-        mukesaki_idx = GetIdx.get_idx(uri_col, "tokui_name")
-        if mukesaki_idx == -1:
-            print("必要なカラムが見つかりませんでした。tokui_name")
-            sys.exit(1)
-        for line in uri_data:
-            if "秦野" in line[mukesaki_idx]:
-                mukesakis_dic["hadano"].append(line)
-                continue
-            if "浜松" in line[mukesaki_idx]:
-                mukesakis_dic["hamamatsu"].append(line)
-                continue
-            if "岡崎" in line[mukesaki_idx]:
-                mukesakis_dic["okazaki"].append(line)
-                continue
-            if "広島" in line[mukesaki_idx]:
-                mukesakis_dic["hiroshima"].append(line)
-                continue
-            if "熊本" in line[mukesaki_idx]:
-                mukesakis_dic["kumamoto"].append(line)
-                continue
+        # mukesakis_data = {"hadano":[[data_一行], [data__一行]....], 
+        #                  "hamamatsu": [[data_一行], [data__一行]..]}
+        data_processing = DataProcessing()
+        mukesakis_data_toyo = data_processing.create_mukesakis_data(
+                                               toyo_data_col, toyo_data)
     
         # ToyoKensyuのインスタンス生成
         toyo_kensyu: ToyoKensyu = InstanceFactory.get_ToyoKensyu(
-                mukesakis_dic, uri_col, dates_dic
+                mukesakis_data_toyo, toyo_data_col, dates_dic
         )
-        toyo_kensyu.write_uri_mount_to_ws()
+        # toyo_kensyuのデータをExcelに書き込む
+        toyo_kensyu.write_amount_to_ws()
         toyo_kensyu.excel_save()
 
+        '''
+        stanleyデータ>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        '''
         # StanleyKensyu_dataを取得する。
         fetch_stan_kensyu_data = InstanceFactory.get_FetchStanKensyuData()
-        stan_data_col, stan_data_last_month = \
+        try:
+            stan_data_col, stan_data_last_month = \
                               fetch_stan_kensyu_data.fetch_data(last_month) 
-        _, stan_data_this_month = fetch_stan_kensyu_data.fetch_data(this_month)
+            _, stan_data_this_month = fetch_stan_kensyu_data.fetch_data(this_month)
+        except FileNotFoundError as e:
+            print(f"スタンレー検収データがみつかりません。中止します:{e}")
+            sys.exit(1)
 
         # 先月と今月のデータを結合する
         stan_data = stan_data_last_month + stan_data_this_month
 
-        deli_day_idx = GetIdx.get_idx(stan_data_col, "deli_day")
-        for line in stan_data:
-            line[deli_day_idx] = "20" + line[deli_day_idx]  # 20260726のようにする
+        # stanley_kensyu.yamlを取得
+        yaml_path: str = get_yaml_path()
+        with open(yaml_path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+        ics_nos: Dict[str, str] = data["ICSNo"]
+        factory_codes: Dict[str, str] = data["stanley_factory_code"]
+        if not(ics_nos and factory_codes):
+            print("stanley_kensyu.yamlのICSNoまたはstanley_factory_codeがありません。中止します")
+            sys.exit(1)
+
+        # stan_data_colとstan_dataを編集する
+        edited_col, edited_stan_data = data_processing.edit_stan_data(
+                stan_data_col, stan_data, ics_nos, factory_codes, dates_dic)
+        # mukesakis_data_stan = {"hadano":[[data_一行], [data__一行]....], 
+        #                  "hamamatsu": [[data_一行], [data__一行]..]}
+        mukesakis_data_stan = data_processing.create_mukesakis_data(
+                                               edited_col, edited_stan_data)
+        # StanKensyuのインスタンス生成
+        stan_kensyu: StanKensyu = InstanceFactory.get_StanKensyu(
+                mukesakis_data_stan, edited_col, dates_dic
+        )
+        # stan_kensyuのデータをExcelに書き込む
+        stan_kensyu.write_amount_to_ws()
+        stan_kensyu.excel_save()
+
+        
 
 
-        print(stan_data_col)
-        print(stan_data)
-        print(deli_day_idx)
+
+
+
+
 
 
         

@@ -6,6 +6,8 @@ from get_idx import GetIdx
 from i_uri_data import IUriData
 from toyo_uri import ToyoUri
 from toyo_kensyu import ToyoKensyu
+from stan_uri import StanUri
+from stan_kensyu import StanKensyu
 from excel import Excel
 from get_paths import get_sql_python_module_path, get_kensyu_data_path
 from fetch_data_for_list import FetchStanKensyuData
@@ -113,6 +115,55 @@ class InstanceFactory:
         excel: Excel = cls.get_Excel()
 
         return ToyoKensyu(toyo_uri_instances, excel)
+
+         
+    @classmethod
+    def get_StanUriInstances(cls, 
+            mukesakis_dic: Dict[str, List[List[Any]]],
+            uri_col: List[str],
+            dates_dic: Dict[str, str])-> Dict[str, List[IUriData]] :
+
+        '''
+        mukesakis_dic = {"hadano":[[uri_data_一行], [uri_data__一行]....], "hamamatsu": [[uri_data_一行], [uri_data__一行]..]}
+
+        uri_instances(ToyoUri) = {"hadano":[ToyoUri, ToyoUri....], "hamamatsu": [ToyoUri, ToyoUri....]}
+        '''
+        ins_name: str = 'stan_uri_instances'
+        if ins_name in cls._instances:
+            return cls._instances[ins_name]
+
+        uri_instances: Dict[str, List[IUriData]] = {}
+
+        for mukesaki, uris_data in mukesakis_dic.items():
+            mukesakis: List[IUriData] = []
+            if not uris_data:
+                mukesakis.append(StanUri([], mukesaki, uri_col, dates_dic))
+                uri_instances[mukesaki] = mukesakis
+                continue
+
+            for uri_data in uris_data:
+                stan_uri: IUriData = \
+                    StanUri(uri_data, mukesaki, uri_col, dates_dic)
+                mukesakis.append(stan_uri)
+            uri_instances[mukesaki] = mukesakis
+
+        cls._instances[ins_name] = uri_instances
+
+        return uri_instances
+
+
+    @classmethod
+    def get_StanKensyu(cls, 
+            mukesakis_dic: Dict[str, List[List[Any]]],
+            uri_col: List[str],
+            dates_dic: Dict[str, str])-> StanKensyu:
+
+        stan_uri_instances: Dict[str, List[IUriData]] = \
+            cls.get_StanUriInstances(mukesakis_dic, uri_col, dates_dic)
+
+        excel: Excel = cls.get_Excel()
+
+        return StanKensyu(stan_uri_instances, excel)
 
          
     @classmethod

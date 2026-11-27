@@ -62,32 +62,31 @@ class Excel:
         self.ws.cell(row=row, column=col, value=uri_total)
         
 
+    def write_uri_mount_to_ws_stan(self, mukesaki: str, period: str,
+                              uri_amount: int) -> None:
+        row: int = self.rows_dic[f'ROW_{mukesaki.upper()}']
+        col: int = self.cols_dic[f'STAN_COL_{period}']
+        self.ws.cell(row=row, column=col, value=uri_amount)
+
+
+    def write_uri_total_to_ws_stan(self, period: str,
+                              uri_total: int) -> None:
+        row: int = self.rows_dic['ROW_TOTAL']
+        col: int = self.cols_dic[f'STAN_COL_{period}']
+        self.ws.cell(row=row, column=col, value=uri_total)
+        
+
+    def write_tax_total_to_ws_stan(self, period: str,
+                              tax_total: int) -> None:
+        row: int = self.rows_dic['ROW_TAX']
+        col: int = self.cols_dic[f'STAN_COL_{period}']
+        self.ws.cell(row=row, column=col, value=tax_total)
+        
+
     def save_file(self)->None:
         output_path: str = get_excel_output_path()
         try:
             self.wb.save(filename= f'{output_path}out.xlsx')
         except Exception:
             print('ファイルを保存できません。record_sheet.xlsxを閉じてください')
-
-    def open_file(self)-> None:
-        
-        openFile: str = r'record_sheet.xlsx'
-
-        if platform.system() == 'Windows':
-            try:
-                os.startfile(openFile)
-            except OSError as e:
-                print(f'./record_sheet.xlsxを開けませんでした{e}')
-        if platform.system() == 'Darwin':
-            try:
-                subprocess.run(['open', openFile], check=True)
-            except (OSError, subprocess.CalledProcessError):
-                print('./record_sheet.xlsxを開けませんでした')
-        if platform.system() == 'Linux':
-            print('手動で./record_sheet.xlsxを開いてください')
-
-
-
-
-
 

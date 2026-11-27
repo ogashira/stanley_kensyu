@@ -2,37 +2,41 @@ from typing import TYPE_CHECKING, Dict, List
 from i_uri_data import IUriData
 from excel import Excel
 
-class ToyoKensyu():
+class ToyoKensyu:
     def __init__(self, 
                  uri_instances: Dict[str, List[IUriData]],
                  excel: Excel) -> None:
 
         self._uri_instances: Dict[str,List[IUriData]] = uri_instances
         self._excel: Excel = excel
+        self._uri_amounts_dic: Dict[str, Dict[str, int]] = \
+                                        self._create_uri_amounts_dic()
+        #{'hadano':{'last26Deli_to_this25Deli': 0, 'this1Deli_to_this25Deli': 0,}
 
 
-    def write_uri_mount_to_ws(self)-> None:
-        uri_amounts_dic: Dict[str, Dict[str, int]] = {}
-        #{'hadano':{'last26Deli_to_this25Deli': 0, 'this1Deli_to_this25Deli': 0,}    
+    def _create_uri_amounts_dic(self)-> Dict[str, Dict[str,int]]:
+        uri_amounts_dic: Dict[str, Dict[str,int]] = {}
         for mukesaki, instances in self._uri_instances.items():
             uri_amounts_dic[mukesaki] = {}
-
             self._add_instance_amount(mukesaki, instances, uri_amounts_dic)
+        return uri_amounts_dic
 
+
+    def write_amount_to_ws(self)-> None:
         # mukesaki,period,amountをExcelに渡してｼｰﾄに書き込んでもらう
-        for mukesaki, amounts_dic in uri_amounts_dic.items():
+        for mukesaki, amounts_dic in self._uri_amounts_dic.items():
             for period, amount in amounts_dic.items():
                 self._excel.write_uri_mount_to_ws_toyo(mukesaki, 
                                     period, amount)
 
         # amoutの合計を出してExcelに書き込む
-        self._write_uri_total_to_ws(uri_amounts_dic)
+        self._write_uri_total_to_ws(self._uri_amounts_dic)
 
 
-    def _write_uri_total_to_ws(self, uri_amounts_dic: Dict[str, Dict[str,int]])-> None:
+    def _write_uri_total_to_ws(self, amounts_dic_dic: Dict[str, Dict[str,int]])-> None:
         # periodごとに合計を出してExcelに書き込む
         periods_total_dic: Dict[str, int] = {}
-        for _, amounts_dic in uri_amounts_dic.items():
+        for _, amounts_dic in amounts_dic_dic.items():
             for period, amount in amounts_dic.items():
                 periods_total_dic[period] = \
                         periods_total_dic.get(period,0) + amount

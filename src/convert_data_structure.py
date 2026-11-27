@@ -1,5 +1,5 @@
 from typing import List, Dict
-from get_idx import GetIdx, ogaColumnIndexError
+from get_idx import GetIdx, OgaColumnIndexError
 
 class ConvertDataStructure:
     
@@ -9,7 +9,7 @@ class ConvertDataStructure:
         list: List[str] = []
         idx = GetIdx.get_idx(cols, col_name)
         if idx == -1:
-            raise ogaColumnIndexError(f'{col_name}のカラムが不正です。')
+            raise OgaColumnIndexError(f'{col_name}のカラムが不正です。')
 
         for line in data:
             list.append(line[idx])
@@ -25,7 +25,7 @@ class ConvertDataStructure:
         val2_idx: int = GetIdx.get_idx(cols, args[2])
 
         if key_idx == -1 or val1_idx == -1 or val2_idx == -1:
-            raise ogaColumnIndexError(f'{args}のカラムが不正です。')
+            raise OgaColumnIndexError(f'{args}のカラムが不正です。')
 
         for line in data:
             val1 = line[val1_idx]
@@ -56,7 +56,7 @@ class ConvertDataStructure:
         key_idx: int = GetIdx.get_idx(cols, key_col)
         val_idx: int = GetIdx.get_idx(cols, val_col)
         if key_idx == -1 or val_idx == -1:
-            raise ogaColumnIndexError(
+            raise OgaColumnIndexError(
                     f'{key_col}と{val_col}のカラムが不正です。'
             )
 
